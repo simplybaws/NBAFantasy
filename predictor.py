@@ -42,25 +42,35 @@ np.save('scale_values.npy', scaler.scale_)
 mean_values = np.load('mean_values.npy')
 scale_values = np.load('scale_values.npy')
 
-# Get player name input from user
-#player_name = input("Enter the player's name: ")
 
-# Get the player's data from the DataFrame
-#player_data = df[df['Player'] == player_name][['MP', 'FG', '3P', '2P', 'FT', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']]
-#player_data_scaled = (player_data - mean_values) / scale_values
 
-# Convert the scaled data to a TensorFlow tensor
-#player_data_tensor = tf.constant(player_data_scaled.values, dtype=tf.float32)
+while True:
+    player_name_input = input("Enter the player's name: ")
+    
+    if player_name_input in df['Player'].values:
+        player_data = df[df['Player'] == player_name_input][['MP', 'FG', '3P', '2P', 'FT', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']]
+        player_data_scaled = (player_data - mean_values) / scale_values
 
-# Predict using the trained model
-#predicted_fantasy_pts = model.predict(player_data_tensor)
+        # Rest of your code for prediction and handling the player's data
 
-#print(f'Predicted Fantasy Points for {player_name}: {predicted_fantasy_pts[0][0]}')
+        break  # Exit the loop if valid player name is entered
+    else:
+        print('Cannot seem to find that player, please ensure the name typed is accurate, and that the player played within the seasons spanning from 2017-2023')
 
-# Get the predicted FantasyPts for all players
+        # Convert the scaled data to a TensorFlow tensor
+player_data_tensor = tf.constant(player_data_scaled.values, dtype=tf.float32)
+
+        #Predict using the trained model
+predicted_fantasy_pts = model.predict(player_data_tensor)
+
+print(f'Predicted Fantasy Points for {player_name_input}: {predicted_fantasy_pts[0][0]}')
+
+        # Get the predicted FantasyPts for all players
 all_players_data_scaled = (x - mean_values) / scale_values
 all_players_data_tensor = tf.constant(all_players_data_scaled.values, dtype=tf.float32)
 all_predicted_fantasy_pts = model.predict(all_players_data_tensor)
+    
+
 
 # Create a DataFrame with player names and their predicted FantasyPts
 predictions_df = pd.DataFrame({
